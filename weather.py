@@ -10,7 +10,7 @@ st.set_page_config(
 st.title("Weather Bot")
 st.write("Enter any city and get the weather + AI advice")
 
-def get_city(city);
+def get_city(city):
     url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}&count=1"
 
     data = requests.get(url).json()
@@ -22,7 +22,7 @@ def get_city(city);
 
 def get_weather(lat, lon):
     url = (
-    f"https://api.open-meteo.com/v1/forcast?"
+    f"https://api.open-meteo.com/v1/forecast?"
     f"latitude={lat}&longitude={lon}"
     "&current=temperature_2m,wind_speed_10m"
     "&daily=precipitation_probability_max"
@@ -31,13 +31,13 @@ def get_weather(lat, lon):
     return requests.get(url).json()
 def advice(temp, rain):
     if temp > 30:
-        return"it is a hot day. Drink water and stay cool."
+        return "it is a hot day. Drink water and stay cool."
     elif temp < 10:
-        "it is a cold day. wear warm clothes"
+        return "it is a cold day. wear warm clothes"
     elif rain > 50:
-        return"rain is very likly today. Wear a rain jacket."
+        return "rain is very likely today. Wear a rain jacket."
     else:
-        return("Weather is normal. Enjoy the day.")
+        return "Weather is normal. Enjoy the day."
     
 def speak(text):
     audio = BytesIO()
@@ -99,6 +99,7 @@ if st.button("Check Weather"):
 
             AI advice:
             {msg}
+            """
         )
 speech = f"""
 The temperature in {city} is {temp_c} degrees celsius or {temp_f} degrees fahrenheit.
@@ -112,7 +113,7 @@ audio = speak(speech)
 st.audio(
 audio,
 format="audio/mp3"
-)git
+)
 
 else:
     st.error("City not found")

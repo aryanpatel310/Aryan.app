@@ -1,5 +1,5 @@
 import streamlit as st
-form transformers import pipeline
+from transformers import pipeline
 st.set.page_config(page_title="AI Language Translator")
 
 st.title("AI language translator")
