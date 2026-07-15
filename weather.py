@@ -67,7 +67,7 @@ if st.button("Check Weather"):
             lon
         )
 
-        temp_c = weather["current"]["temparature_2m"]
+        temp_c = weather["current"]["temperature_2m"]
 
         temp_f = round(
             temp_c * 9/5 + 32,
@@ -76,11 +76,11 @@ if st.button("Check Weather"):
 
         wind = weather["current"]["wind_speed_10m"]
 
-        rain = weather["daily"]["precipitation_probability_mak"][0]
+        rain = weather["daily"]["precipitation_probability_max"][0]
 
 
         msg = advice(
-            temp_c
+            temp_c,
             rain
         )
 
@@ -101,19 +101,20 @@ if st.button("Check Weather"):
             {msg}
             """
         )
-speech = f"""
+        
+        speech = f"""
 The temperature in {city} is {temp_c} degrees celsius or {temp_f} degrees fahrenheit.
 Rain probability is {rain}%.
 
 {msg}
 """
 
-audio = speak(speech)
+        audio = speak(speech)
 
-st.audio(
-audio,
-format="audio/mp3"
-)
+        st.audio(
+            audio,
+            format="audio/mp3"
+        )
 
-else:
-    st.error("City not found")
+    else:
+        st.error("City not found")

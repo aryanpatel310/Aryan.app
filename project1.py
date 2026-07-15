@@ -1,7 +1,7 @@
 from openai import OpenAI
-import streamlit_app as st
+import streamlit as st
 
-client = OpenAI(api_key=st.secrets[" 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"])
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Define the function to extract and categorize intents and entities using OpenAI API
 def extract_and_categorize(text):
