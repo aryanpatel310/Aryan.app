@@ -15,9 +15,8 @@ def build_fallback_story(topic: str, genre: str, length: int) -> str:
     return story[:length] + "..."
 
 
-def render_story_app():
-    st.set_page_config(page_title="AI Story Generator", layout="wide")
-    st.title("AI Story Generator")
+def render_story_ui():
+    st.header("AI Story Generator")
     st.write("Generate stories based on your prompts")
 
     topic = st.text_input(
@@ -50,6 +49,13 @@ def render_story_app():
 
         st.subheader("Generated Story")
         st.write(story)
+
+
+def render_story_app():
+    st.set_page_config(page_title="AI Story Generator", layout="wide")
+    st.title("AI Story Generator")
+    st.write("Generate stories based on your prompts")
+    render_story_ui()
 
 
 if __name__ == "__main__":
