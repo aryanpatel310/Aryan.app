@@ -1,18 +1,10 @@
 import streamlit as st
 
+from local_ai import build_story_text
+
 
 def build_fallback_story(topic: str, genre: str, length: int) -> str:
-    topic_text = topic.strip() or "a brave adventurer"
-    paragraphs = [
-        f"In the {genre} realm of {topic_text}, a curious traveler discovered a hidden path that shimmered beneath the moonlight.",
-        "Every step along that path revealed a new surprise, from speaking lanterns to clocks that ran backward, until the traveler understood that destiny had been waiting all along.",
-        "By dawn, the journey had changed the traveler forever, and the world felt brighter, stranger, and more magical than before.",
-    ]
-
-    story = "\n\n".join(paragraphs)
-    if len(story) < length:
-        story = story + "\n\n" + ("The adventure continued long after sunset, carrying hope, wonder, and a little bit of mischief into every new day. " * 2)
-    return story[:length] + "..."
+    return build_story_text(topic, genre, length)
 
 
 def render_story_ui():
@@ -45,7 +37,7 @@ def render_story_ui():
 
         with st.spinner("Generating story..."):
             story = build_fallback_story(topic, genre, length)
-            st.info("The local AI model backend is unavailable in this environment, so a built-in story generator is being used instead.")
+            st.info("Using the built-in local story generator for this environment.")
 
         st.subheader("Generated Story")
         st.write(story)
