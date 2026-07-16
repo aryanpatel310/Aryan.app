@@ -3,8 +3,12 @@ from io import BytesIO
 
 import requests
 import streamlit as st
-from gtts import gTTS
 from openai import OpenAI
+
+try:
+    from gtts import gTTS
+except Exception:  # pragma: no cover - optional dependency in deployed environments
+    gTTS = None
 
 from story import render_story_ui
 
@@ -64,6 +68,8 @@ with weather_tab:
         return "Weather is normal. Enjoy the day."
 
     def speak(text):
+        if gTTS is None:
+            return None
         audio = BytesIO()
         tts = gTTS(text)
         tts.write_to_fp(audio)
@@ -112,7 +118,10 @@ with weather_tab:
             """
 
             audio = speak(speech)
-            st.audio(audio, format="audio/mp3")
+            if audio is not None:
+                st.audio(audio, format="audio/mp3")
+            else:
+                st.info("Audio playback is unavailable in this environment because gTTS is not installed.")
         else:
             st.error("City not found")
 
@@ -167,3 +176,4 @@ with intent_tab:
 
 with story_tab:
     render_story_ui()
+
