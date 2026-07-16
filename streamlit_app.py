@@ -3,7 +3,11 @@ from io import BytesIO
 
 import requests
 import streamlit as st
-from openai import OpenAI
+
+try:
+    from openai import OpenAI
+except Exception:  # pragma: no cover - optional dependency in deployed environments
+    OpenAI = None
 
 try:
     from gtts import gTTS
@@ -129,50 +133,53 @@ with intent_tab:
     st.header("Intent & Entity Extraction")
     st.write("Extract and categorize intents and entities from your text using GPT-3.5-turbo")
 
-    try:
-        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    if OpenAI is None:
+        st.info("The OpenAI package is not available in this environment, so the intent extraction feature is currently unavailable.")
+    else:
+        try:
+            client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-        def extract_and_categorize(text):
-            prompt = f"""
-            Extract and categorize the intents and entities from the following text:
+            def extract_and_categorize(text):
+                prompt = f"""
+                Extract and categorize the intents and entities from the following text:
 
-            Text: "{text}"
+                Text: "{text}"
 
-            Provide the result in the following JSON format:
-            {{
-                "intents": [
-                    {{"intent": "<intent>", "category": "<category>"}}
-                ],
-                "entities": [
-                    {{"entity": "<entity>", "category": "<category>"}}
-                ]
-            }}
+                Provide the result in the following JSON format:
+                {{
+                    "intents": [
+                        {{"intent": "<intent>", "category": "<category>"}}
+                    ],
+                    "entities": [
+                        {{"entity": "<entity>", "category": "<category>"}}
+                    ]
+                }}
 
-            Make sure the categories are appropriate and relevant to the context.
-            """
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": prompt},
-                ],
-                max_tokens=150,
-            )
-            return response.choices[0].message.content.strip()
+                Make sure the categories are appropriate and relevant to the context.
+                """
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a helpful assistant."},
+                        {"role": "user", "content": prompt},
+                    ],
+                    max_tokens=150,
+                )
+                return response.choices[0].message.content.strip()
 
-        user_input = st.text_input("Enter your query:")
+            user_input = st.text_input("Enter your query:")
 
-        if user_input:
-            result = extract_and_categorize(user_input)
-            st.write("Extracted and Categorized Intents and Entities:")
-            try:
-                st.json(json.loads(result))
-            except Exception:
-                st.write(result)
+            if user_input:
+                result = extract_and_categorize(user_input)
+                st.write("Extracted and Categorized Intents and Entities:")
+                try:
+                    st.json(json.loads(result))
+                except Exception:
+                    st.write(result)
 
-    except Exception:
-        st.error("⚠️ API Key not configured. Please add your OpenAI API key to Streamlit secrets.")
-        st.info("To use this feature, add `OPENAI_API_KEY` to your `.streamlit/secrets.toml` file")
+        except Exception:
+            st.error("⚠️ API Key not configured. Please add your OpenAI API key to Streamlit secrets.")
+            st.info("To use this feature, add `OPENAI_API_KEY` to your `.streamlit/secrets.toml` file")
 
 with story_tab:
     render_story_ui()
