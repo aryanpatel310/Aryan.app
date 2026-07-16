@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-from gtts import gTTs
+from gtts import gTTS
 from io import BytesIO
 
 st.set_page_config(
