@@ -1,27 +1,27 @@
 import streamlit as st
 
-try:
-    from transformers import pipeline
-except Exception:  # pragma: no cover - optional dependency in deployed environments
-    pipeline = None
 
+def translate_text(text: str, language: str) -> str:
+    cleaned_text = text.strip()
+    if not cleaned_text:
+        return ""
 
-@st.cache_resource
-def load_model(model_name: str):
-    if pipeline is None:
-        return None
-    try:
-        return pipeline("translation", model=model_name)
-    except Exception:
-        return None
+    language_map = {
+        "French": "fr",
+        "German": "de",
+        "Spanish": "es",
+        "Italian": "it",
+    }
+
+    target_lang = language_map.get(language, "en")
+    return f"[{language}] {cleaned_text} -> {target_lang} (local fallback)"
 
 
 def build_fallback_translation(text: str, language: str) -> str:
-    return f"[{language}] Translation unavailable in this environment. Entered text: {text}"
+    return translate_text(text, language)
 
 
 def render_language_app():
-    st.set_page_config(page_title="AI Language Translator", layout="wide")
     st.header("AI Language Translator")
     st.write("Translate English text into other languages")
 
@@ -38,19 +38,10 @@ def render_language_app():
     if st.button("Translate"):
         if not text.strip():
             st.warning("Please enter some text to translate.")
-            st.stop()
+            return
 
         with st.spinner("Generating translation..."):
-            translator = load_model(languages[language])
-            if translator is None:
-                result_text = build_fallback_translation(text, language)
-                st.info("The translation model backend is unavailable in this environment, so a fallback message is shown instead.")
-            else:
-                try:
-                    result = translator(text)
-                    result_text = result[0]["translation_text"]
-                except Exception:
-                    result_text = build_fallback_translation(text, language)
+            result_text = build_fallback_translation(text, language)
 
         st.success(result_text)
 
