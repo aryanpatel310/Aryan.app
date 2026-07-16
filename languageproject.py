@@ -1,4 +1,5 @@
 import streamlit as st
+from deep_translator import GoogleTranslator
 
 
 def translate_text(text: str, language: str) -> str:
@@ -14,7 +15,10 @@ def translate_text(text: str, language: str) -> str:
     }
 
     target_lang = language_map.get(language, "en")
-    return f"[{language}] {cleaned_text} -> {target_lang} (local fallback)"
+    try:
+        return GoogleTranslator(source="en", target=target_lang).translate(cleaned_text)
+    except Exception:
+        return f"[{language}] {cleaned_text} -> {target_lang} (offline fallback)"
 
 
 def build_fallback_translation(text: str, language: str) -> str:
