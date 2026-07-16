@@ -14,6 +14,7 @@ try:
 except Exception:  # pragma: no cover - optional dependency in deployed environments
     gTTS = None
 
+from languageproject import render_language_app
 from story import render_story_ui
 
 
@@ -22,8 +23,8 @@ st.set_page_config(page_title="Aryan's AI Apps", layout="wide")
 st.title("🤖 Welcome to Aryan's AI Apps")
 st.write("Explore different AI-powered applications built with Streamlit")
 
-home_tab, weather_tab, intent_tab, story_tab = st.tabs(
-    ["Home", "🌤️ Weather Bot", "🗣️ Intent Extraction", "✍️ Story Generator"]
+home_tab, weather_tab, intent_tab, story_tab, language_tab = st.tabs(
+    ["Home", "🌤️ Weather Bot", "🗣️ Intent Extraction", "✍️ Story Generator", "🌐 Language Translator"]
 )
 
 with home_tab:
@@ -35,6 +36,7 @@ with home_tab:
         - **Weather Bot**: Get weather information for any city with AI-powered advice
         - **Intent Extraction**: Extract and categorize intents and entities from text using GPT
         - **Story Generator**: Create a short story from a topic and genre
+        - **Language Translator**: Translate English text into other languages
 
         Select a tab above to get started!
 
@@ -183,4 +185,7 @@ with intent_tab:
 
 with story_tab:
     render_story_ui()
+
+with language_tab:
+    render_language_app()
 
