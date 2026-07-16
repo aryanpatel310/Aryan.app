@@ -2,3 +2,4 @@ streamlit>=1.59.2
 gtts>=2.5.4
 requests>=2.34.2
 openai>=1.0.0
+transformers>=4.41.0
