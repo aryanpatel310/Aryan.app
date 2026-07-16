@@ -4,8 +4,6 @@ from io import BytesIO
 import requests
 import streamlit as st
 
-from local_ai import extract_intents_and_entities
-
 try:
     from openai import OpenAI
 except Exception:  # pragma: no cover - optional dependency in deployed environments
@@ -142,12 +140,28 @@ with intent_tab:
 
     def extract_and_categorize(text):
         if OpenAI is None:
-            return extract_intents_and_entities(text)
+            cleaned = (text or "").strip()
+            if not cleaned:
+                return json.dumps({"intents": [], "entities": []})
+            return json.dumps(
+                {
+                    "intents": [{"intent": "request_information", "category": "general"}],
+                    "entities": [{"entity": cleaned, "category": "text_input"}],
+                }
+            )
 
         try:
             client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         except Exception:
-            return extract_intents_and_entities(text)
+            cleaned = (text or "").strip()
+            if not cleaned:
+                return json.dumps({"intents": [], "entities": []})
+            return json.dumps(
+                {
+                    "intents": [{"intent": "request_information", "category": "general"}],
+                    "entities": [{"entity": cleaned, "category": "text_input"}],
+                }
+            )
 
         prompt = f"""
         Extract and categorize the intents and entities from the following text:
@@ -177,7 +191,15 @@ with intent_tab:
             )
             return response.choices[0].message.content.strip()
         except Exception:
-            return extract_intents_and_entities(text)
+            cleaned = (text or "").strip()
+            if not cleaned:
+                return json.dumps({"intents": [], "entities": []})
+            return json.dumps(
+                {
+                    "intents": [{"intent": "request_information", "category": "general"}],
+                    "entities": [{"entity": cleaned, "category": "text_input"}],
+                }
+            )
 
     user_input = st.text_input("Enter your query:")
 
